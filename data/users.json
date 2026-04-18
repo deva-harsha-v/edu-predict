@@ -1,0 +1,66 @@
+[
+  {
+    "id": "u-admin",
+    "email": "admin@spp.edu",
+    "password": "Oc+mV/UATtiOlvo2P+JPGFKa3pW/aeetuKnhw1Zz0jA=",
+    "role": "admin",
+    "name": "Admin User",
+    "studentId": null,
+    "dept": null,
+    "year": null,
+    "semester": null,
+    "designation": "System Administrator"
+  },
+  {
+    "id": "u-teacher",
+    "email": "teacher@spp.edu",
+    "password": "1J2Q15OiaRW1fZ2IlEmP2M0OXfb4FZWydEbDCSsTsFM=",
+    "role": "teacher",
+    "name": "Dr. Meena Iyer",
+    "studentId": null,
+    "dept": "CSE",
+    "year": null,
+    "semester": null,
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "u-student",
+    "email": "student@spp.edu",
+    "password": "MPPnMZURC0h3OG2K7ydiaLK4VHa0rwFGFu/WSm3rHIc=",
+    "role": "student",
+    "name": "Arjun Sharma",
+    "studentId": "S001",
+    "dept": "CSE",
+    "year": "2",
+    "semester": "4",
+    "designation": null
+  },
+  {
+    "id": "u-776f71d1",
+    "email": "deva@gmail.com",
+    "password": "GmxXt3L/HEd0QHG1DzZtjl7ZAtcpEYAR4p/HwTh/yT4=",
+    "role": "student",
+    "name": "Deva Harsha",
+    "studentId": "S007",
+    "dept": "CSE",
+    "year": "3",
+    "semester": "6",
+    "employeeId": null,
+    "designation": null,
+    "createdAt": "2026-04-18T04:35:40.951572"
+  },
+  {
+    "id": "u-b211f597",
+    "email": "harsa@gmail.com",
+    "password": "qo//Z6OIjxIe/oMXybklACIR7YDyPBFjm9pHEJzh2zY=",
+    "role": "teacher",
+    "name": "Harsha Veerla",
+    "studentId": null,
+    "dept": "CSE",
+    "year": null,
+    "semester": null,
+    "employeeId": "T007",
+    "designation": "Professor",
+    "createdAt": "2026-04-18T04:38:03.144249"
+  }
+]

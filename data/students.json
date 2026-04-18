@@ -1,0 +1,15 @@
+[
+  {
+    "id": "rec-06e41c13",
+    "studentId": "S007",
+    "name": "Deva Harsha",
+    "year": 3,
+    "semester": 6,
+    "sgpa": 7.63,
+    "cgpa": 7.12,
+    "attendance": 81.36,
+    "assignments": 10,
+    "projects": 5,
+    "updatedAt": "2026-04-18T04:36:18.723797"
+  }
+]

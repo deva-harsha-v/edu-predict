@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Student Performance Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #0f0d0a;
+  --bg:     #faf8f3;
+  --cream:  #f0ece2;
+  --border: #d8d2c4;
+  --accent: #1a3a8f;
+  --red:    #8f1a1a;
+  --green:  #1a6b3a;
+  --muted:  #6b6358;
+  --light:  #9e9589;
+  --surface:#ffffff;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-body:  'Libre Baskerville', Georgia, serif;
+  --font-mono:  'Source Code Pro', 'Courier New', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* GRAIN */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* TOP BAR */
+.login-topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 2.5rem;
+  background: rgba(250,248,243,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none;
+}
+.topbar-brand-name {
+  font-family: var(--font-serif);
+  font-size: 1rem; font-weight: 500;
+  color: var(--ink);
+}
+.topbar-badge {
+  font-family: var(--font-mono);
+  font-size: 0.52rem; letter-spacing: 0.18em;
+  background: var(--accent); color: #fff;
+  padding: 0.15rem 0.5rem;
+}
+.topbar-back {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.topbar-back:hover { color: var(--ink); }
+
+/* MAIN LAYOUT */
+.login-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem 3rem;
+  position: relative; z-index: 1;
+}
+
+/* DECORATIVE LINES */
+.deco-line-h {
+  position: fixed;
+  left: 0; right: 0;
+  height: 1px; background: var(--border);
+  z-index: 0;
+}
+.deco-line-v {
+  position: fixed;
+  top: 0; bottom: 0;
+  width: 1px; background: var(--border);
+  z-index: 0;
+}
+
+/* LOGIN RECTANGLE */
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 0 0 1px rgba(15,13,10,0.04),
+    0 8px 40px rgba(15,13,10,0.10),
+    0 2px 8px rgba(15,13,10,0.06);
+  width: 100%; max-width: 480px;
+  position: relative;
+  animation: boxReveal 0.5s cubic-bezier(0.22,0.68,0,1.2) both;
+}
+@keyframes boxReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* BOX HEADER */
+.box-header {
+  padding: 2.25rem 2.5rem 1.75rem;
+  border-bottom: 1px solid var(--cream);
+  text-align: center;
+}
+.box-logo {
+  font-family: var(--font-serif);
+  font-size: 0.8rem; font-weight: 400;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--light); margin-bottom: 1.25rem;
+}
+.box-logo span {
+  display: inline-block;
+  width: 28px; height: 1px;
+  background: var(--border);
+  vertical-align: middle;
+  margin: 0 0.5rem;
+}
+.box-title {
+  font-family: var(--font-serif);
+  font-size: 2rem; font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink); margin-bottom: 0.35rem;
+  line-height: 1.15;
+}
+.box-title em { font-style: italic; }
+.box-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--light);
+}
+
+/* TABS */
+.box-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--cream);
+}
+.box-tab {
+  flex: 1; padding: 0.9rem 0;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--light);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.box-tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+/* PANELS */
+.box-panel { display: none; padding: 1.75rem 2.5rem 2.25rem; }
+.box-panel.active { display: block; animation: panelIn 0.25s ease both; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ROLE SELECTOR */
+.role-row { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
+.role-pill {
+  flex: 1; padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border);
+  background: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.65rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  transition: all 0.2s;
+}
+.role-pill .r-icon { font-size: 1.25rem; }
+.role-pill.active {
+  border-color: var(--accent);
+  background: rgba(26,58,143,0.04);
+  color: var(--accent);
+}
+
+/* FORM FIELDS */
+.f-group { margin-bottom: 1rem; }
+.f-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.62rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--light); margin-bottom: 0.35rem;
+}
+.f-input, .f-select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-family: var(--font-body); font-size: 0.9rem;
+  color: var(--ink); outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  border-radius: 0;
+  appearance: none; -webkit-appearance: none;
+}
+.f-input:focus, .f-select:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+/* STUDENT ID — shown only for students */
+.sid-field { display: block; }
+.sid-field.hidden { display: none; }
+
+/* ERROR */
+.f-err {
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--red); margin-top: 0.75rem;
+  min-height: 1.1rem; line-height: 1.4;
+}
+.f-succ {
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--green); margin-top: 0.75rem;
+}
+
+/* SUBMIT BUTTON */
+.btn-submit {
+  width: 100%; padding: 0.85rem;
+  background: var(--ink); color: #fff;
+  border: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 0.5rem;
+  position: relative;
+}
+.btn-submit:hover { background: var(--accent); }
+.btn-submit:active { transform: translateY(1px); }
+.btn-submit:disabled { opacity: 0.6; cursor: default; transform: none; }
+.btn-submit .loader {
+  display: inline-block; width: 12px; height: 12px;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 0.5rem; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* DIVIDER */
+.divider {
+  margin: 1.25rem 0;
+  border: none; border-top: 1px solid var(--cream);
+}
+
+/* DEMO HINT */
+.demo-hint {
+  background: var(--cream);
+  padding: 0.9rem 1rem;
+  margin-top: 1rem;
+}
+.demo-hint-title {
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--light); margin-bottom: 0.5rem;
+}
+.demo-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.2rem 0;
+}
+.demo-role {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  color: var(--muted);
+}
+.demo-creds {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  color: var(--ink); font-weight: 500;
+}
+
+/* FOOTER */
+.box-footer {
+  padding: 1rem 2.5rem 1.5rem;
+  border-top: 1px solid var(--cream);
+  text-align: center;
+}
+.box-footer-note {
+  font-family: var(--font-mono); font-size: 0.62rem;
+  letter-spacing: 0.08em; color: var(--light);
+}
+.box-footer-note a { color: var(--accent); text-decoration: none; }
+
+/* CORNER DECORATIONS */
+.corner {
+  position: absolute; width: 12px; height: 12px;
+  border-color: var(--accent); border-style: solid;
+}
+.corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+/* ASIDE TEXT */
+.login-aside {
+  position: fixed; left: 2.5rem; bottom: 3rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--light); z-index: 1;
+  opacity: 0.7;
+}
+.login-aside-right {
+  position: fixed; right: 2.5rem; bottom: 3rem;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--font-mono);
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--light); z-index: 1;
+  opacity: 0.7;
+}
+
+@media (max-width: 520px) {
+  .login-box { max-width: 100%; }
+  .box-panel { padding: 1.5rem 1.5rem 2rem; }
+  .box-header { padding: 1.75rem 1.5rem 1.5rem; }
+  .login-aside, .login-aside-right { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="login-topbar">
+  <a href="landing.html" class="topbar-brand">
+    <span class="topbar-brand-name">Student Performance Predictor</span>
+    <span class="topbar-badge">SPP</span>
+  </a>
+  <a href="landing.html" class="topbar-back">← Back to Home</a>
+</div>
+
+<!-- DECORATIVE GRID LINES -->
+<div class="deco-line-h" style="top:30%"></div>
+<div class="deco-line-h" style="top:70%"></div>
+<div class="deco-line-v" style="left:15%"></div>
+<div class="deco-line-v" style="right:15%"></div>
+
+<div class="login-aside">Academic Intelligence Platform</div>
+<div class="login-aside-right">Secure Sign In</div>
+
+<!-- MAIN LOGIN PAGE -->
+<main class="login-page">
+  <div class="login-box">
+    <!-- Corner accents -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- Header -->
+    <div class="box-header">
+      <div class="box-logo"><span></span>SPP<span></span></div>
+      <div class="box-title">Welcome <em>Back</em></div>
+      <div class="box-subtitle">Sign in to your account</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="box-tabs">
+      <button class="box-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="box-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="box-panel active" id="panel-login">
+
+      <!-- Role selector -->
+      <div class="role-row">
+        <button class="role-pill active" id="lr-student" onclick="setLoginRole('student')">
+          <span class="r-icon">🎓</span>Student
+        </button>
+        <button class="role-pill" id="lr-teacher" onclick="setLoginRole('teacher')">
+          <span class="r-icon">👩‍🏫</span>Teacher
+        </button>
+        <button class="role-pill" id="lr-admin" onclick="setLoginRole('admin')">
+          <span class="r-icon">⚙️</span>Admin
+        </button>
+      </div>
+
+      <div class="f-group">
+        <label class="f-label">Email Address</label>
+        <input class="f-input" id="l-email" type="email" placeholder="you@college.edu" autocomplete="email">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <input class="f-input" id="l-pass" type="password" placeholder="••••••••">
+      </div>
+      <div class="f-group sid-field" id="l-sid-group">
+        <label class="f-label">Student ID <span style="color:var(--light);font-size:0.58rem;letter-spacing:0">(students only)</span></label>
+        <input class="f-input" id="l-sid" type="text" placeholder="e.g. S001" autocomplete="off">
+      </div>
+
+      <button class="btn-submit" id="l-btn" onclick="doLogin()">Sign In →</button>
+      <div class="f-err" id="l-err"></div>
+
+      <hr class="divider">
+      <div class="demo-hint">
+        <div class="demo-hint-title">Demo Credentials</div>
+        <div class="demo-row">
+          <span class="demo-role">⚙️ Admin</span>
+          <span class="demo-creds">admin@spp.edu / admin123</span>
+        </div>
+        <div class="demo-row">
+          <span class="demo-role">👩‍🏫 Teacher</span>
+          <span class="demo-creds">teacher@spp.edu / teach123</span>
+        </div>
+        <div class="demo-row">
+          <span class="demo-role">🎓 Student</span>
+          <span class="demo-creds">student@spp.edu / stud123 (ID: S001)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="box-panel" id="panel-register">
+      <!-- Role selector -->
+      <div class="role-row">
+        <button class="role-pill active" id="rr-student" onclick="setRegRole('student')">
+          <span class="r-icon">🎓</span>Student
+        </button>
+        <button class="role-pill" id="rr-teacher" onclick="setRegRole('teacher')">
+          <span class="r-icon">👩‍🏫</span>Teacher
+        </button>
+      </div>
+
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label">First Name</label>
+          <input class="f-input" id="r-fname" type="text" placeholder="Arjun">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Last Name</label>
+          <input class="f-input" id="r-lname" type="text" placeholder="Sharma">
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Email Address</label>
+        <input class="f-input" id="r-email" type="email" placeholder="you@college.edu">
+      </div>
+
+      <!-- Student fields -->
+      <div id="reg-student-fields">
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Student ID</label>
+            <input class="f-input" id="r-sid" type="text" placeholder="S0001">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Department</label>
+            <select class="f-select" id="r-dept">
+              <option>CSE</option><option>ECE</option><option>IT</option>
+              <option>MECH</option><option>CIVIL</option><option>EEE</option><option>AIDS</option>
+            </select>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Year</label>
+            <select class="f-select" id="r-year">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Semester</label>
+            <select class="f-select" id="r-sem">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teacher fields -->
+      <div id="reg-teacher-fields" style="display:none">
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Employee ID</label>
+            <input class="f-input" id="r-eid" type="text" placeholder="T0001">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Department</label>
+            <select class="f-select" id="r-tdept">
+              <option>CSE</option><option>ECE</option><option>IT</option>
+              <option>MECH</option><option>CIVIL</option><option>EEE</option>
+            </select>
+          </div>
+        </div>
+        <div class="f-group">
+          <label class="f-label">Designation</label>
+          <input class="f-input" id="r-desig" type="text" placeholder="Assistant Professor">
+        </div>
+      </div>
+
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label">Password</label>
+          <input class="f-input" id="r-pass" type="password" placeholder="Min. 6 chars">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Confirm Password</label>
+          <input class="f-input" id="r-pass2" type="password" placeholder="Repeat">
+        </div>
+      </div>
+
+      <button class="btn-submit" id="r-btn" onclick="doRegister()">Create Account →</button>
+      <div class="f-err" id="r-err"></div>
+      <div class="f-succ" id="r-succ"></div>
+    </div>
+
+    <!-- Box Footer -->
+    <div class="box-footer">
+      <span class="box-footer-note">
+        Student Performance Predictor · Academic Intelligence Platform
+        · <a href="landing.html">Return to Home</a>
+      </span>
+    </div>
+  </div>
+</main>
+
+<script>
+// ══════════════════════════════════════════════
+// BACKEND API BASE URL — update to your backend address
+// ══════════════════════════════════════════════
+const API_BASE = 'http://localhost:5000/api';
+
+// ══════════════════════════════════════════════
+// LOCAL ACCOUNT STORAGE
+// Accounts are stored in localStorage and authenticated locally.
+// The backend /api/login and /api/register endpoints are called
+// when available; localStorage is the fallback.
+// ══════════════════════════════════════════════
+function getLocalAccounts() {
+  try { return JSON.parse(localStorage.getItem('spp_accounts') || 'null'); } catch(e) { return null; }
+}
+function saveLocalAccounts(accounts) {
+  localStorage.setItem('spp_accounts', JSON.stringify(accounts));
+}
+// Seed default accounts if none exist
+function ensureDefaultAccounts() {
+  if (!getLocalAccounts()) {
+    saveLocalAccounts([
+      { id:'u-admin',   email:'admin@spp.edu',   password:'admin123',  role:'admin',   name:'Admin User',     studentId: null },
+      { id:'u-teacher', email:'teacher@spp.edu', password:'teach123',  role:'teacher', name:'Dr. Meena Iyer', studentId: null },
+      { id:'u-student', email:'student@spp.edu', password:'stud123',   role:'student', name:'Arjun Sharma',   studentId:'S001' },
+    ]);
+  }
+}
+ensureDefaultAccounts();
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let loginRole = 'student';
+let regRole   = 'student';
+
+// ── ROLE SELECTORS ──
+function setLoginRole(r) {
+  loginRole = r;
+  ['student','teacher','admin'].forEach(role => {
+    document.getElementById('lr-'+role)?.classList.toggle('active', role === r);
+  });
+  document.getElementById('l-sid-group').classList.toggle('hidden', r !== 'student');
+}
+
+function setRegRole(r) {
+  regRole = r;
+  ['student','teacher'].forEach(role => {
+    document.getElementById('rr-'+role)?.classList.toggle('active', role === r);
+  });
+  document.getElementById('reg-student-fields').style.display = r === 'student' ? 'block' : 'none';
+  document.getElementById('reg-teacher-fields').style.display = r === 'teacher' ? 'block' : 'none';
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('panel-login').classList.toggle('active', tab==='login');
+  document.getElementById('panel-register').classList.toggle('active', tab==='register');
+}
+
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const sid   = document.getElementById('l-sid').value.trim();
+  const err   = document.getElementById('l-err');
+  const btn   = document.getElementById('l-btn');
+
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Email and password are required.'; return; }
+  if (loginRole === 'student' && !sid) { err.textContent = 'Student ID is required for student login.'; return; }
+
+  btn.innerHTML = '<span class="loader"></span>Signing in…';
+  btn.disabled = true;
+
+  // ── Try backend first ──
+  let account = null;
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass, role: loginRole, studentId: sid })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      account = data.user;
+      account.token = data.token || ('local-token-' + Date.now());
+    }
+  } catch(e) { /* backend offline — fall through to local */ }
+
+  // ── Local fallback ──
+  if (!account) {
+    await new Promise(r => setTimeout(r, 400));
+    const accounts = getLocalAccounts() || [];
+    const found = accounts.find(a => a.email === email && a.password === pass && a.role === loginRole);
+    if (!found) {
+      err.textContent = 'Invalid credentials or wrong role selected.';
+      btn.innerHTML = 'Sign In →'; btn.disabled = false; return;
+    }
+    account = { ...found, token: 'local-token-' + Date.now() };
+  }
+
+  // ── Validate student ID ──
+  if (loginRole === 'student' && account.studentId !== sid) {
+    err.textContent = 'Student ID does not match this account.';
+    btn.innerHTML = 'Sign In →'; btn.disabled = false; return;
+  }
+
+  // ── Store session ──
+  const session = {
+    token: account.token,
+    role: account.role,
+    name: account.name,
+    email: account.email,
+    studentId: account.studentId || null,
+    dept: account.dept,
+    year: account.year,
+    semester: account.semester,
+    designation: account.designation,
+  };
+  sessionStorage.setItem('spp_session', JSON.stringify(session));
+  localStorage.setItem('spp_session', JSON.stringify(session));
+  window.location.href = 'app.html';
+}
+
+// ══════════════════════════════════════════════
+// REGISTER
+// ══════════════════════════════════════════════
+async function doRegister() {
+  const err  = document.getElementById('r-err');
+  const succ = document.getElementById('r-succ');
+  const btn  = document.getElementById('r-btn');
+
+  err.textContent = ''; succ.textContent = '';
+
+  const fname = document.getElementById('r-fname').value.trim();
+  const lname = document.getElementById('r-lname').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+
+  if (!fname || !lname || !email || !pass) { err.textContent = 'All required fields must be filled.'; return; }
+  if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+  if (pass !== pass2) { err.textContent = 'Passwords do not match.'; return; }
+
+  const newAccount = {
+    id: 'u-' + Date.now(),
+    name: fname + ' ' + lname,
+    email,
+    password: pass,
+    role: regRole,
+  };
+
+  if (regRole === 'student') {
+    const sid = document.getElementById('r-sid').value.trim();
+    if (!sid) { err.textContent = 'Student ID is required.'; return; }
+    newAccount.studentId   = sid;
+    newAccount.dept        = document.getElementById('r-dept').value;
+    newAccount.year        = document.getElementById('r-year').value;
+    newAccount.semester    = document.getElementById('r-sem').value;
+  } else {
+    newAccount.employeeId  = document.getElementById('r-eid').value.trim();
+    newAccount.dept        = document.getElementById('r-tdept').value;
+    newAccount.designation = document.getElementById('r-desig').value.trim();
+  }
+
+  btn.innerHTML = '<span class="loader"></span>Creating account…';
+  btn.disabled = true;
+
+  // ── Check duplicate email locally ──
+  const accounts = getLocalAccounts() || [];
+  if (accounts.find(a => a.email === email)) {
+    err.textContent = 'An account with this email already exists.';
+    btn.innerHTML = 'Create Account →'; btn.disabled = false; return;
+  }
+
+  // ── Try backend register ──
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newAccount)
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(()=>({}));
+      err.textContent = d.error || 'Registration failed on server.';
+      btn.innerHTML = 'Create Account →'; btn.disabled = false; return;
+    }
+  } catch(e) { /* backend offline — store locally only */ }
+
+  // ── Save locally ──
+  await new Promise(r => setTimeout(r, 400));
+  accounts.push(newAccount);
+  saveLocalAccounts(accounts);
+
+  succ.textContent = '✓ Account created successfully. You can now sign in.';
+  btn.innerHTML = 'Create Account →'; btn.disabled = false;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+// If already logged in, redirect
+const existingSession = sessionStorage.getItem('spp_session') || localStorage.getItem('spp_session');
+if (existingSession) {
+  try {
+    const s = JSON.parse(existingSession);
+    if (s?.token) window.location.href = 'app.html';
+  } catch(e) {}
+}
+
+// Init role display
+setLoginRole('student');
+document.getElementById('l-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('r-pass2').addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+</script>
+</body>
+</html>
