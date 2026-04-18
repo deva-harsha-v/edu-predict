@@ -398,13 +398,13 @@ def health():
 # RUN
 # ══════════════════════════════════════════════════════════════════════════
 if __name__ == '__main__':
+    import os
     print("=" * 55)
     print("  Student Performance Predictor — Backend")
-    print("  http://localhost:5000")
+    print("  Running on Railway / Production Mode")
     print("=" * 55)
-    print("  Default accounts:")
-    print("    admin@spp.edu   / admin123  (admin)")
-    print("    teacher@spp.edu / teach123  (teacher)")
-    print("    student@spp.edu / stud123   (student, ID: S001)")
-    print("=" * 55)
-    app.run(debug=True, port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
